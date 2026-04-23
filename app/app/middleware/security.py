@@ -60,4 +60,4 @@ def get_user_id_by_token(
     payload: dict = Depends(decode_access_token), db: Session = Depends(get_db)
 ):
     user = db.query(User).filter(User.username == payload.get("sub")).first()
-    return user.id
+    return user

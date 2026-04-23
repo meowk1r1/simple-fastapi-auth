@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, func
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, func, Index, column
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 
@@ -80,14 +80,16 @@ class Task(Base):
     project_id: Mapped[int] = mapped_column(ForeignKey('projects.id'))
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
     title: Mapped[str]
+    is_completed: Mapped[bool] = mapped_column(
+        default=False, server_default="false"
+    )
     due_date: Mapped[datetime] = mapped_column(nullable=True)
     file_path: Mapped[str] = mapped_column(nullable=True)
 
-    user: Mapped["User"] = relationship(
-        "User",# Имя связи
-        back_populates="tasks"# отсылает нас на строчку 16 - ключ обратноый связи в табле юзерс
-    )
-    project: Mapped["Project"] = relationship(
-        "Project",
-        back_populates="tasks",
+    user: Mapped["User"] = relationship("User", back_populates="tasks")
+    project: Mapped["Project"] = relationship("Project", back_populates="tasks")
+
+    __table_args__ = (
+        Index('idx_tasks_user_project', 'user_id', 'project_id'),
+        Index('idx_tasks_due_date', 'due_date'),
     )
