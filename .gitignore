@@ -3,3 +3,7 @@
 app/uploads/public/61591fdf-1d75-47dc-9ac1-e8c9a019870a.webp
 *.pyc
 *.log
+
+node_modules/
+node_modules/*
+**/node_modules
